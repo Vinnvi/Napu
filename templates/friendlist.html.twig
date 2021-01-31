@@ -1,0 +1,54 @@
+{% extends 'base_connected.html.twig' %}
+
+{% block title %} Friendlist {% endblock %}
+
+{% block stylesheets %}
+    <link href="{{ asset('css/friendlist.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% block body %}
+
+<div id="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12" id="listFriends">
+                <ul class="list-group">
+                    <li class="list-group-item"><h4><b>Friends</b></h4></li>
+                    {% if friends %}
+                        <li class="list-group-item"> No friends yet. </li>
+                    {% else %}
+                        {% for friend in friends %}
+                            <li class="list-group-item"> {{friend.username}} </li>
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12" id="listFriendRequests">
+                <ul class="list-group">
+                    <li class="list-group-item"><h4><b>Friend requests</b></h4></li>
+                    {% if friends %}
+                        <li class="list-group-item"> No requests</li>
+                    {% else %}
+                        {% for friend in friends %}
+                            <li class="list-group-item"> {{friend.username}} </li>
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12" id="listBans">
+                <ul class="list-group">
+                    <li class="list-group-item"><h4><b>Banned users</b></h4></li>
+                    {% if friends %}
+                        <li class="list-group-item">No user banned</li>
+                    {% else %}
+                        {% for friend in friends %}
+                            <li class="list-group-item"> {{friend.username}} </li>
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
