@@ -36,15 +36,17 @@ class FriendRequestRepository extends ServiceEntityRepository
     }
     */
 
-    /*
-    public function findOneBySomeField($value): ?FriendRequest
+    
+    public function findOneById($userId, $friendId): ?FriendRequest
     {
         return $this->createQueryBuilder('f')
-            ->andWhere('f.exampleField = :val')
-            ->setParameter('val', $value)
+            ->andWhere('f.fromUser = :val')
+            ->andWhere('f.ToUser = :val2')
+            ->setParameter('val', $userId)
+            ->setParameter('val2', $friendId)
             ->getQuery()
             ->getOneOrNullResult()
         ;
     }
-    */
+    
 }

@@ -1,0 +1,22 @@
+#content
+{
+    margin: 1%;
+    border: 2px solid;
+    border-radius: 25px;
+}
+
+#bannerProfile
+{
+    padding: 1%;
+    background-color: #e1dddd;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    border-bottom: 2px solid;
+    vertical-align: middle;
+}
+
+#contentProfile
+{
+    padding:1%;
+    padding-left: 2%;
+}

@@ -31,6 +31,10 @@ class FriendlistController extends AbstractController
 
         $friends = $user->getFriendship();
 
-        return $this->render('friendlist.html.twig', ['user' => $user, 'friends' => $friends]);
+        $requests = $user->getFromFriendRequests();
+
+        dump($requests);
+
+        return $this->render('friendlist.html.twig', ['user' => $user, 'friends' => $friends, 'requests' => $requests]);
     }
 }

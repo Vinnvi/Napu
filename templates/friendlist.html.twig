@@ -14,7 +14,7 @@
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12" id="listFriends">
                 <ul class="list-group">
                     <li class="list-group-item"><h4><b>Friends</b></h4></li>
-                    {% if friends %}
+                    {% if friends is empty %}
                         <li class="list-group-item"> No friends yet. </li>
                     {% else %}
                         {% for friend in friends %}
@@ -26,11 +26,13 @@
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12" id="listFriendRequests">
                 <ul class="list-group">
                     <li class="list-group-item"><h4><b>Friend requests</b></h4></li>
-                    {% if friends %}
+                    {% if requests is empty %}
                         <li class="list-group-item"> No requests</li>
                     {% else %}
-                        {% for friend in friends %}
-                            <li class="list-group-item"> {{friend.username}} </li>
+                        {% for request in requests %}
+                            <li class="list-group-item"> 
+                                <a href="{{ path('pub_profile', {username: request.fromUser.username}) }}"> {{request.fromUser.username}} </a> {{request.date|date("m/d/Y")}} 
+                            </li>
                         {% endfor %}
                     {% endif %}
                 </ul>
@@ -38,7 +40,7 @@
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12" id="listBans">
                 <ul class="list-group">
                     <li class="list-group-item"><h4><b>Banned users</b></h4></li>
-                    {% if friends %}
+                    {% if friends is empty %}
                         <li class="list-group-item">No user banned</li>
                     {% else %}
                         {% for friend in friends %}
