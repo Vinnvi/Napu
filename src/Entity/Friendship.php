@@ -34,6 +34,11 @@ class Friendship
      */
     private $date;
 
+    public function __construct()
+    {
+        $this->date = new \DateTime();
+    }
+
     public function getId(): ?int
     {
         return $this->id;

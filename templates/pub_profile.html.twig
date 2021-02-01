@@ -17,10 +17,17 @@
             {% if friends == true %}
                 <i class="bi bi-person-check-fill" data-toggle="tooltipRequested" data-placement="top" title="You are friends" style="font-size: 2rem;" ></i>
             {% else %}
-                <i class="bi bi-person-plus" data-toggle="tooltipRequested" data-placement="top" title="request friend" style="font-size: 2rem;" ></i>
+                <form method="post" action="{{ path('friendship.request.add', {id: userProfile.id}) }}">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="hidden" name="_token" value="{{ csrf_token('addFriendRequest' ~ userProfile.id) }}">
+                    <button class="btn">
+                        <i class="bi bi-person-plus" data-toggle="tooltipRequested" data-placement="top" title="request friend" style="font-size: 2rem;" ></i>
+                    </button>
+                </form>
             {% endif %}
-            <i class="bi bi-dash-circle-fill" data-toggle="tooltipRequested" data-placement="top" title="add user in ban list" style="font-size: 2rem;" ></i>
         {% endif %}
+        <i class="bi bi-dash-circle-fill" data-toggle="tooltipRequested" data-placement="top" title="add user in ban list" style="font-size: 2rem;" ></i>
+        
         <center> <h1> {{userProfile.username}} </h1> </center>
 
     </div>
@@ -30,3 +37,4 @@
 
 </div>
 {% endblock %}
+
