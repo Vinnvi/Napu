@@ -202,9 +202,17 @@ class User implements UserInterface
     /**
      * @return Collection|Friendship[]
      */
-    public function getFriendship(): Collection
+    public function getFriendships(): Collection
     {
-        return $this->friendsWithMe;
+        return $this->friends;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getFriends(): Collection
+    {
+        /* TODO */
     }
 
     public function addFriendship(Friendship $friendship)

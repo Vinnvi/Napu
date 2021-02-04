@@ -46,7 +46,7 @@ class Friendship
 
     public function getUser(): ?User
     {
-        return $this->user1;
+        return $this->user;
     }
 
     public function setUser(?User $user): self
@@ -58,7 +58,7 @@ class Friendship
 
     public function getFriend(): ?User
     {
-        return $this->user2;
+        return $this->friend;
     }
 
     public function setFriend(?User $friend): self
