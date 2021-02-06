@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -34,6 +36,42 @@ class User implements UserInterface
      * @ORM\Column(type="string")
      */
     private $password;
+
+    /**
+     * @ORM\OneToMany(targetEntity=FriendRequest::class, mappedBy="fromUser")
+     */
+    private $fromFriendRequests;
+
+    /**
+     * @ORM\OneToMany(targetEntity=FriendRequest::class, mappedBy="ToUser")
+     */
+    private $toFriendRequests;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Friendship::class, mappedBy="user")
+     */
+    private $friends;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Friendship::class, mappedBy="friend")
+     */
+    private $friendsWithMe;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Ban::class, mappedBy="authorBan")
+     */
+    private $bans;
+
+    public function __construct()
+    {
+        $this->fromFriendRequests = new ArrayCollection();
+        $this->toFriendRequests = new ArrayCollection();
+
+        $this->friends = new ArrayCollection();
+        $this->friendsWithMe = new ArrayCollection();
+        
+        $this->bans = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -106,5 +144,129 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection|FriendRequest[]
+     */
+    public function getFromFriendRequests(): Collection
+    {
+        return $this->fromFriendRequests;
+    }
+
+    public function addFromFriendRequest(FriendRequest $fromFriendRequest): self
+    {
+        if (!$this->fromFriendRequests->contains($fromFriendRequest)) {
+            $this->fromFriendRequests[] = $fromFriendRequest;
+            $fromFriendRequest->setFromUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFromFriendRequest(FriendRequest $fromFriendRequest): self
+    {
+        if ($this->fromFriendRequests->removeElement($fromFriendRequest)) {
+            // set the owning side to null (unless already changed)
+            if ($fromFriendRequest->getFromUser() === $this) {
+                $fromFriendRequest->setFromUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|FriendRequest[]
+     */
+    public function getToFriendRequests(): Collection
+    {
+        return $this->toFriendRequests;
+    }
+
+    public function addToFriendRequest(FriendRequest $toFriendRequest): self
+    {
+        if (!$this->toFriendRequests->contains($toFriendRequest)) {
+            $this->toFriendRequests[] = $toFriendRequest;
+            $toFriendRequest->setToUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeToFriendRequest(FriendRequest $toFriendRequest): self
+    {
+        if ($this->toFriendRequests->removeElement($toFriendRequest)) {
+            // set the owning side to null (unless already changed)
+            if ($toFriendRequest->getToUser() === $this) {
+                $toFriendRequest->setToUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Friendship[]
+     */
+    public function getFriendships(): Collection
+    {
+        return $this->friends;
+    }
+
+    public function addFriendship(Friendship $friendship)
+    {
+        $this->friends->add($friendship);
+        $friendship->friend->addFriendshipWithMe($friendship);
+    }
+
+    public function addFriendshipWithMe(Friendship $friendship)
+    {
+        $this->friendsWithMe->add($friendship);
+    }
+
+    public function addFriend(User $friend)
+    {
+        $fs = new Friendship();
+        $fs->setUser($this);
+        $fs->setFriend($friend);
+        $fs->setDate(getDate());
+    }
+
+    public function removeFriendship($friendship)
+    {
+        if ($this->friendWithMe->removeElement($friendship)) {
+            
+        }
+    }
+
+    /**
+     * @return Collection|Ban[]
+     */
+    public function getBans(): Collection
+    {
+        return $this->bans;
+    }
+
+    public function addBan(Ban $ban): self
+    {
+        if (!$this->bans->contains($ban)) {
+            $this->bans[] = $ban;
+            $ban->setAuthorBan($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBan(Ban $ban): self
+    {
+        if ($this->bans->removeElement($ban)) {
+            // set the owning side to null (unless already changed)
+            if ($ban->getAuthorBan() === $this) {
+                $ban->setAuthorBan(null);
+            }
+        }
+
+        return $this;
     }
 }

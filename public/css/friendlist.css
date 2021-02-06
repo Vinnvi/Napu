@@ -1,0 +1,10 @@
+#content
+{
+    margin: 1%;
+    padding: 2%;   
+}
+
+#listBans, #listFriends, #listFriendRequests
+{
+    padding: 1%;
+}
