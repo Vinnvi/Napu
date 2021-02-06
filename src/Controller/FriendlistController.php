@@ -194,9 +194,42 @@ class FriendlistController extends AbstractController
         //Persist changes
         $this->em->flush();
 
-        $this->addFlash('success', 'user is now banned');
+        $this->addFlash('success', $bannedUser->getUsername().' is now banned');
 
 
         return $this->redirectToRoute('friendlist', []);
+    }
+
+
+        /**
+     * @Route("/user/ban/{id}", name="user.unban", methods="DELETE")
+     * @param User $unbannedUser
+     * @return Symfony\Component\HttpFoundation\Response;
+    */
+    public function unbanUser(User $unbannedUser)
+    {
+        $user = $this->security->getUser();
+
+        //BEGIN remove ban(if exists)
+        $banRepository = $this->getDoctrine()->getRepository(Ban::class);
+        $ban = $banRepository->findOneById($user->getId(), $unbannedUser->getId());
+
+        if($ban !== null)
+        {
+            $this->em->remove($ban);
+
+        } else {
+            
+        }
+        //END remove ban
+
+
+        //Persist changes
+        $this->em->flush();
+
+        $this->addFlash('success', $unbannedUser->getUsername().' is now unbanned');
+
+
+        return $this->redirectToRoute('pub_profile', ['username' => $unbannedUser->getUsername()]);
     }
 }
