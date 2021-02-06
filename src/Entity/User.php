@@ -57,6 +57,11 @@ class User implements UserInterface
      */
     private $friendsWithMe;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Ban::class, mappedBy="authorBan")
+     */
+    private $bans;
+
     public function __construct()
     {
         $this->fromFriendRequests = new ArrayCollection();
@@ -64,6 +69,8 @@ class User implements UserInterface
 
         $this->friends = new ArrayCollection();
         $this->friendsWithMe = new ArrayCollection();
+        
+        $this->bans = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -207,14 +214,6 @@ class User implements UserInterface
         return $this->friends;
     }
 
-    /**
-     * @return Collection|User[]
-     */
-    public function getFriends(): Collection
-    {
-        /* TODO */
-    }
-
     public function addFriendship(Friendship $friendship)
     {
         $this->friends->add($friendship);
@@ -239,5 +238,35 @@ class User implements UserInterface
         if ($this->friendWithMe->removeElement($friendship)) {
             
         }
+    }
+
+    /**
+     * @return Collection|Ban[]
+     */
+    public function getBans(): Collection
+    {
+        return $this->bans;
+    }
+
+    public function addBan(Ban $ban): self
+    {
+        if (!$this->bans->contains($ban)) {
+            $this->bans[] = $ban;
+            $ban->setAuthorBan($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBan(Ban $ban): self
+    {
+        if ($this->bans->removeElement($ban)) {
+            // set the owning side to null (unless already changed)
+            if ($ban->getAuthorBan() === $this) {
+                $ban->setAuthorBan(null);
+            }
+        }
+
+        return $this;
     }
 }

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Entity\FriendRequest;
 use App\Entity\Friendship;
+use App\Entity\Ban;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -45,7 +46,9 @@ class FriendlistController extends AbstractController
 
         $requests = $user->getToFriendRequests();
 
-        return $this->render('friendlist.html.twig', ['user' => $user, 'friends' => $friends, 'requests' => $requests]);
+        $bans = $user->getBans();
+
+        return $this->render('friendlist.html.twig', ['user' => $user, 'friends' => $friends, 'requests' => $requests, 'bans' => $bans]);
     }
 
     /**
@@ -141,6 +144,58 @@ class FriendlistController extends AbstractController
         }
         
         //end delete
+
+        return $this->redirectToRoute('friendlist', []);
+    }
+
+    /**
+     * @Route("/user/ban/{id}", name="user.ban", methods="CREATE")
+     * @param User $bannedUser
+     * @return Symfony\Component\HttpFoundation\Response;
+    */
+    public function banUser(User $bannedUser)
+    {
+        $user = $this->security->getUser();
+
+        //BEGIN set ban
+        $ban = new Ban();
+        $ban->setAuthorBan($user);
+        $ban->setBannedUser($bannedUser);
+        $this->em->persist($ban);
+        //END set ban
+
+        //BEGIN remove friendship(if exists)
+        $friendshipRepository = $this->getDoctrine()->getRepository(Friendship::class);
+        $friendship1 = $friendshipRepository->findOneById($user->getId(), $bannedUser->getId());
+        $friendship2 = $friendshipRepository->findOneById($bannedUser->getId(), $user->getId());
+
+        if($friendship1 !== null && $friendship2 !== null)
+        {
+            $this->em->remove($friendship1);
+            $this->em->remove($friendship2);
+        }
+        //END remove friendship
+
+        //BEGIN remove friend requests (if exists)
+        $friendRequestRepository = $this->getDoctrine()->getRepository(FriendRequest::class);
+        $friendRequest = $friendRequestRepository->findOneById($user->getId(), $bannedUser->getId());
+        if($friendRequest !== null)
+        {
+            $this->em->remove($friendRequest);
+        }
+
+        $friendRequest = $friendRequestRepository->findOneById($bannedUser->getId(), $user->getId());
+        if($friendRequest !== null)
+        {
+            $this->em->remove($friendRequest);
+        }
+        //END remove friend requests
+
+        //Persist changes
+        $this->em->flush();
+
+        $this->addFlash('success', 'user is now banned');
+
 
         return $this->redirectToRoute('friendlist', []);
     }
