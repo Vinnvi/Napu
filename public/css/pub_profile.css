@@ -1,22 +1,49 @@
 #content
 {
     margin: 1%;
-    border: 2px solid;
-    border-radius: 25px;
+    border: 3px solid;
+    border-radius: 30px;
 }
 
 #bannerProfile
 {
     padding: 1%;
-    background-color: #e1dddd;
+    background-color: rgb(231,53,65);
     border-top-left-radius: 25px;
     border-top-right-radius: 25px;
-    border-bottom: 2px solid;
+    border-bottom: 3px solid;
     vertical-align: middle;
+}
+
+#nicknameBanner
+{
+    color: white;
+}
+
+#form-request
+{
+    display: inline-block;
+}
+
+#form-ban
+{
+    display: inline-block;
+    float: right;
+}
+
+
+#form-unban
+{
+    display: inline-block;
+    float: right;
 }
 
 #contentProfile
 {
     padding:1%;
     padding-left: 2%;
+}
+
+body {
+    background-color: #e8e5e5;
 }

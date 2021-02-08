@@ -1,0 +1,28 @@
+@font-face {
+    font-family: "Inria Sans";
+    src: url("fonts/InriaSans-Regular.ttf") format("ttf");
+}
+
+@font-face {
+    font-family: "Inria Sans Italic";
+    src: url("fonts/InriaSans-Italic.ttf") format("ttf");
+}
+
+
+@font-face {
+    font-family: "Inria Sans Bold";
+    src: url("fonts/InriaSans-Bold.ttf") format("ttf");
+}
+
+
+body {
+    font-family: "Inria Sans";
+}
+
+i {
+    font-family: "Inria Sans Italic";
+}
+
+b {
+    font-family: "Inria Sans Bold"; 
+}
