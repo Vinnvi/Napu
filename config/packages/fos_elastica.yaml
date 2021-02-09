@@ -1,0 +1,14 @@
+# Read the documentation: https://github.com/FriendsOfSymfony/FOSElasticaBundle/blob/master/Resources/doc/setup.md
+# config/packages/fos_elastica.yaml
+fos_elastica:
+    clients:
+        default: { host: elasticsearch, port: 9200 }
+    indexes:
+        app:
+            types:
+                users:
+                    properties:
+                        username: ~
+                    persistence:
+                        driver: orm
+                        model: App\Entity\User
