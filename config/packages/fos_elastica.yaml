@@ -2,13 +2,16 @@
 # config/packages/fos_elastica.yaml
 fos_elastica:
     clients:
-        default: { host: elasticsearch, port: 9200 }
+        default: { host: '%es_host%', port: '%es_port%' }
     indexes:
         app:
             types:
                 users:
                     properties:
-                        username: ~
+                        username: { type: string, boost: 2, analyzer: simple}
+                        lastName: { analyzer: simple }
+                        firstName: { analyzer: simple }
                     persistence:
                         driver: orm
                         model: App\Entity\User
+ 

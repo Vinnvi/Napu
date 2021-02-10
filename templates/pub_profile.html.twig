@@ -82,7 +82,11 @@
                 </div>
             {% endif %}
         </div>
-        <center> <h1><div id="nicknameBanner"> {{userProfile.username}} </div> </h1> </center>
+
+        <center>
+            <img src="{{ '/images/avatars/' ~ userProfile.avatar }}" alt="....." width="64" height="64" class="rounded-circle"/>
+            <h1><div id="nicknameBanner"> {{userProfile.username}} </div> </h1>
+        </center>
 
     </div>
     <div id="contentProfile">

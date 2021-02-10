@@ -22,7 +22,7 @@ final class SearchController extends AbstractController
     public function search(Request $request, SessionInterface $session, TransformedFinder $usersFinder): Response
     {
         $q = (string) $request->query->get('q', '');
-        $results = !empty($q) ? $usersFinder->findHybrid(Util::escapeTerm($q)) : [];
+        $results = !empty($q) ? $usersFinder->findHybrid(Util::escapeTerm($q), null, []) : [];
         $session->set('q', $q);
 
 

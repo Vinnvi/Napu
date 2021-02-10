@@ -6,11 +6,13 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
+ * @UniqueEntity(fields={"username"}, message="There is already an account with this username")
  */
 class User implements UserInterface
 {
@@ -62,6 +64,36 @@ class User implements UserInterface
      */
     private $bans;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $firstName;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $lastName;
+
+    /**
+     * @ORM\Column(type="string", length=1024, nullable=true)
+     */
+    private $avatar;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $dateRegistration;
+
+    /**
+     * @ORM\Column(type="text")
+     */
+    private $email;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isVerified = false;
+
     public function __construct()
     {
         $this->fromFriendRequests = new ArrayCollection();
@@ -71,6 +103,11 @@ class User implements UserInterface
         $this->friendsWithMe = new ArrayCollection();
         
         $this->bans = new ArrayCollection();
+
+        //put default values 
+        $this->avatar= "default-avatar.jpg";
+        $this->dateRegistration = new \DateTime();
+
     }
 
     public function getId(): ?int
@@ -266,6 +303,78 @@ class User implements UserInterface
                 $ban->setAuthorBan(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(?string $firstName): self
+    {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(?string $lastName): self
+    {
+        $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(?string $avatar): self
+    {
+        $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    public function getDateRegistration(): ?\DateTimeInterface
+    {
+        return $this->dateRegistration;
+    }
+
+    public function setDateRegistration(?\DateTimeInterface $dateRegistration): self
+    {
+        $this->dateRegistration = $dateRegistration;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): self
+    {
+        $this->isVerified = $isVerified;
 
         return $this;
     }
