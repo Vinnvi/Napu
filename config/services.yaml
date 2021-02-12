@@ -6,6 +6,7 @@
 parameters:
     es_host: '%env(ES_HOST)%'
     es_port: '%env(ES_PORT)%'
+    avatars_directory: '%kernel.project_dir%/public/images/avatars'
 services:
     # default configuration for services in *this* file
     _defaults:
