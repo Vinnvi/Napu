@@ -23,10 +23,10 @@ class RegistrationFormType extends AbstractType
     {
         $builder
             ->add('username',TextType::class, [
-                'label' => 'Username :'
+                'label' => '* Username :'
             ])
             ->add('email', EmailType::class,[
-                'label' => 'Your email :'
+                'label' => '* Your email :'
             ])
             ->add('firstName', TextType::class, [
                 'label' => 'First name :'
@@ -48,8 +48,8 @@ class RegistrationFormType extends AbstractType
                 'options' => ['attr' => ['class' => 'password-field']],
                 'required' => true,
                 'mapped' => false,
-                'first_options'  => ['label' => 'Password :'],
-                'second_options' => ['label' => 'Repeat Password :'],
+                'first_options'  => ['label' => '* Password :'],
+                'second_options' => ['label' => '* Repeat Password :'],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Please enter a password',
