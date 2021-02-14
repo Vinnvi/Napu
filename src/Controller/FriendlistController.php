@@ -201,7 +201,7 @@ class FriendlistController extends AbstractController
     }
 
 
-        /**
+    /**
      * @Route("/user/ban/{id}", name="user.unban", methods="DELETE")
      * @param User $unbannedUser
      * @return Symfony\Component\HttpFoundation\Response;
@@ -231,5 +231,83 @@ class FriendlistController extends AbstractController
 
 
         return $this->redirectToRoute('pub_profile', ['username' => $unbannedUser->getUsername()]);
+    }
+
+    /**
+     * @Route("/user/unrequest/{id}", name="user.unrequest", methods="DELETE")
+     * @param User $requestedUser
+     * @return Symfony\Component\HttpFoundation\Response;
+     */
+    public function unRequestUser(User $requestedUser)
+    {
+        $user = $this->security->getUser();
+
+        //BEGIN get friendRequest
+        $friendRequestRepository = $this->getDoctrine()->getRepository(FriendRequest::class);
+        $friendRequest = $friendRequestRepository->findOneById($user, $requestedUser);
+
+        //END get friendRequest
+
+        //check if we have friendrequest
+        if($friendRequest === null)
+        {
+            $this->addFlash('error', 'You have no friendRequest with '.$requestedUser->getUsername());
+            return $this->redirectToRoute('pub_profile', ['username' => $requestedUser->getUsername()]);
+        }
+
+        //if yes, remove it
+        $this->em->remove($friendRequest);
+
+        //Persist changes
+        $this->em->flush();
+
+        $this->addFlash('success', 'friendRequest has been removed');
+
+
+        return $this->redirectToRoute('pub_profile', ['username' => $requestedUser->getUsername()]);
+
+    }
+
+    /**
+     * @Route("/friendship/remove/{id}", name="friendship.remove", methods="DELETE")
+     * @param User $removedUser
+     * @return Symfony\Component\HttpFoundation\Response;
+     */
+    public function removeFriendship(User $removedUser)
+    {
+        $user = $this->security->getUser();
+
+        //BEGIN get friendships
+        $friendshipRepository= $this->getDoctrine()->getRepository(Friendship::class);
+        $friendship1 = $friendshipRepository->findOneById($user, $removedUser);
+
+        if($friendship1 === null)
+        {
+            $this->addFlash('error', 'You are not friends');
+            return $this->redirectToRoute('pub_profile', ['username' => $requestedUser->getUsername()]);
+        }
+
+        $friendship2 = $friendshipRepository->findOneById($removedUser, $user);
+
+        if($friendship2 === null)
+        {
+            $this->addFlash('error', 'You are not friends');
+            return $this->redirectToRoute('pub_profile', ['username' => $requestedUser->getUsername()]);
+        }
+
+        //END get friendships
+
+        //remove them
+        $this->em->remove($friendship1);
+        $this->em->remove($friendship2);
+
+        //Persist changes
+        $this->em->flush();
+
+        $this->addFlash('success', 'friendship has been removed');
+
+
+        return $this->redirectToRoute('pub_profile', ['username' => $requestedUser->getUsername()]);
+
     }
 }

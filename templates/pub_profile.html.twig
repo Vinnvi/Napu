@@ -22,6 +22,16 @@
                     </div>
                 </div>
             {% endif %}
+            {% if (label == 'error' ) %}
+                <div id="message">
+                    <div style="padding: 5px;">
+                        <div id="inner-message" class="alert alert-error fade show" >
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            {{flash}}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
         {% endfor %}
     {% endfor %}
 
@@ -32,16 +42,32 @@
         <div id="buttonsBanner">
             {% if banned == false %}
                 {% if requested == true %}
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">
-                        <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
-                        <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
-                    </svg>
+                    <div id="buttonFriendRequest">
+                        <form method="post" action="{{ path('user.unrequest', {id: userProfile.id}) }}">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="_token" value="{{ csrf_token('unrequestUser' ~ userProfile.id) }}">
+                            <button class="btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">
+                                    <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                                    <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
                 {% else %}
                     {% if friends == true %}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
-                            <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                        </svg>
+                        <div id="buttonFriend">
+                            <form method="post" action="{{ path('friendship.remove', {id: userProfile.id}) }}">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token('removeFriendship' ~ userProfile.id) }}">
+                                <button class="btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
+                                        <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                                    </svg>
+                                </btn>
+                            </form>
+                        </div>
                     {% else %}
                         <div id="form-request">
                             <form method="post" action="{{ path('friendship.request.add', {id: userProfile.id}) }}">
@@ -57,7 +83,7 @@
                         </div>
                     {% endif %}
                 {% endif %}
-                <div id="form-ban">
+                <div id="form-ban" class="d-flex justify-content-end">
                     <form method="post" action="{{ path('user.ban', {id: userProfile.id}) }}">
                         <input type="hidden" name="_method" value="CREATE">
                         <input type="hidden" name="_token" value="{{ csrf_token('banUser' ~ userProfile.id) }}">
@@ -69,7 +95,7 @@
                     </form>
                 </div>
             {% else %}
-                <div id="form-unban">
+                <div id="form-unban" class="d-flex justify-content-end">
                     <form method="post" action="{{ path('user.unban', {id: userProfile.id}) }}">
                         <input type="hidden" name="_method" value="DELETE">
                         <input type="hidden" name="_token" value="{{ csrf_token('unbanUser' ~ userProfile.id) }}">
@@ -82,11 +108,13 @@
                 </div>
             {% endif %}
         </div>
-
-        <center>
+        <div id="mainBanner" class="d-flex justify-content-center">
             <img src="{{ '/images/avatars/' ~ userProfile.avatar }}" alt="....." width="128" height="128" class="rounded-circle"/>
+        </div>
+        <div id="mainBanner2" class="d-flex justify-content-center">
             <h1><div id="nicknameBanner"> {{userProfile.username}} </div> </h1>
-        </center>
+        </div>
+        
 
     </div>
     <div id="contentProfile">
