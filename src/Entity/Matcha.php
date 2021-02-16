@@ -2,23 +2,16 @@
 
 namespace App\Entity;
 
-use App\Repository\BetroomRepository;
+use App\Repository\MatchaRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=BetroomRepository::class)
+ * @ORM\Entity(repositoryClass=MatchaRepository::class)
  */
-class Betroom
+class Matcha
 {
-
-    const STATUS = [
-        0 => 'enabled',
-        1 => 'disabled'
-    ];
-
-
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -27,40 +20,27 @@ class Betroom
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
-
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $status;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $public;
-
-    /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $date;
 
     /**
-     * @ORM\OneToMany(targetEntity=BetroomMatch::class, mappedBy="betroom")
+     * @ORM\ManyToOne(targetEntity=Sport::class)
+     */
+    private $sport;
+
+    /**
+     * @ORM\OneToMany(targetEntity=BetroomMatch::class, mappedBy="matcha")
      */
     private $betroomMatches;
 
     /**
-     * @ORM\OneToMany(targetEntity=BetRules::class, mappedBy="betroom")
+     * @ORM\OneToMany(targetEntity=BetRules::class, mappedBy="matcha")
      */
     private $betRules;
 
     public function __construct()
     {
-        $this->public = false;
-        $this->status = 0;
-        $this->date = new \Datetime();
         $this->betroomMatches = new ArrayCollection();
         $this->betRules = new ArrayCollection();
     }
@@ -70,50 +50,26 @@ class Betroom
         return $this->id;
     }
 
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getStatus(): ?int
-    {
-        return $this->status;
-    }
-
-    public function setStatus(int $status): self
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
-    public function getPublic(): ?bool
-    {
-        return $this->public;
-    }
-
-    public function setPublic(bool $public): self
-    {
-        $this->public = $public;
-
-        return $this;
-    }
-
     public function getDate(): ?\DateTimeInterface
     {
         return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $date): self
+    public function setDate(?\DateTimeInterface $date): self
     {
         $this->date = $date;
+
+        return $this;
+    }
+
+    public function getSport(): ?Sport
+    {
+        return $this->sport;
+    }
+
+    public function setSport(?Sport $sport): self
+    {
+        $this->sport = $sport;
 
         return $this;
     }
@@ -130,7 +86,7 @@ class Betroom
     {
         if (!$this->betroomMatches->contains($betroomMatch)) {
             $this->betroomMatches[] = $betroomMatch;
-            $betroomMatch->setBetroom($this);
+            $betroomMatch->setMatcha($this);
         }
 
         return $this;
@@ -140,8 +96,8 @@ class Betroom
     {
         if ($this->betroomMatches->removeElement($betroomMatch)) {
             // set the owning side to null (unless already changed)
-            if ($betroomMatch->getBetroom() === $this) {
-                $betroomMatch->setBetroom(null);
+            if ($betroomMatch->getMatcha() === $this) {
+                $betroomMatch->setMatcha(null);
             }
         }
 
@@ -160,7 +116,7 @@ class Betroom
     {
         if (!$this->betRules->contains($betRule)) {
             $this->betRules[] = $betRule;
-            $betRule->setBetroom($this);
+            $betRule->setMatcha($this);
         }
 
         return $this;
@@ -170,8 +126,8 @@ class Betroom
     {
         if ($this->betRules->removeElement($betRule)) {
             // set the owning side to null (unless already changed)
-            if ($betRule->getBetroom() === $this) {
-                $betRule->setBetroom(null);
+            if ($betRule->getMatcha() === $this) {
+                $betRule->setMatcha(null);
             }
         }
 
