@@ -56,6 +56,11 @@ class Betroom
      */
     private $betRules;
 
+    /**
+     * @ORM\OneToOne(targetEntity=BetroomRules::class, mappedBy="betroom", cascade={"persist", "remove"})
+     */
+    private $betroomRules;
+
     public function __construct()
     {
         $this->public = false;
@@ -174,6 +179,23 @@ class Betroom
                 $betRule->setBetroom(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getBetroomRules(): ?BetroomRules
+    {
+        return $this->betroomRules;
+    }
+
+    public function setBetroomRules(BetroomRules $betroomRules): self
+    {
+        // set the owning side of the relation if necessary
+        if ($betroomRules->getBetroom() !== $this) {
+            $betroomRules->setBetroom($this);
+        }
+
+        $this->betroomRules = $betroomRules;
 
         return $this;
     }
