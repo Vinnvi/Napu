@@ -1,0 +1,24 @@
+{% extends 'base_connected.html.twig' %}
+
+{% block title %} Create a betroom {% endblock %}
+
+{% block stylesheets %}
+    <link href="{{ asset('css/createBetroom.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% block body %}
+
+
+<div id="content">
+    <h1> Create a Betroom </h1>
+    {{ form_start(form) }}
+
+        {{ form_row(form.name) }}
+        {{ form_row(form.public) }}
+        <button type="submit" class="btn btn-primary">Register</button>
+
+    {{form_end(form)}}
+</div>
+
+
+{% endblock %}
