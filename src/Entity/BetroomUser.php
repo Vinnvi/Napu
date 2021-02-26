@@ -49,7 +49,7 @@ class BetroomUser
     public function __construct()
     {
         $this->date = new \Datetime();
-        $this->status = 1;
+        $this->status = 0;
     }
 
     public function getId(): ?int
