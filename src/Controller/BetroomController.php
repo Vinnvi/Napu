@@ -10,21 +10,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Security;
 use Doctrine\ORM\EntityManagerInterface;
 
 class BetroomController extends AbstractController
 {
 
-
-    /**
-     * @var Security
-     */
-    private $security;
-
-    public function __construct(Security $security, EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-       $this->security = $security;
        $this->em = $entityManager;
     }
 
@@ -35,7 +27,7 @@ class BetroomController extends AbstractController
     */
     public function view(Betroom $betroom)
     {
-        $user = $this->security->getUser();
+        $user = $this->getUser();
 
         if($betroom === null) {
             //TODO handle error 
@@ -51,7 +43,7 @@ class BetroomController extends AbstractController
      */
     public function create(Request $request): Response
     {
-        $user = $this->security->getUser();
+        $user = $this->getUser();
 
         $betroom = new Betroom();
 

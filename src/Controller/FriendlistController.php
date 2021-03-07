@@ -9,29 +9,19 @@ use App\Entity\Ban;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Security;
 use Doctrine\ORM\EntityManagerInterface;
 
 class FriendlistController extends AbstractController
 {
-
-
-    /**
-     * @var Security
-     */
-    private $security;
-
 
     /**
      * @var EntityManagerInterface
      */
     private $em;
 
-    public function __construct(Security $security, EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->security = $security;
         $this->em = $entityManager;
-
     }
 
 
@@ -40,7 +30,7 @@ class FriendlistController extends AbstractController
      */
     public function index(): Response
     {
-        $user = $this->security->getUser();
+        $user = $this->getUser();
 
         $friends = $user->getFriendships();
 
@@ -58,7 +48,7 @@ class FriendlistController extends AbstractController
     */
     public function addFriendshipRequest(User $newFriend)
     {
-        $user = $this->security->getUser();
+        $user = $this->getUser();
         $friendRequest = new FriendRequest();
         $friendRequest->setFromUser($user);
         $friendRequest->setToUser($newFriend);
@@ -78,7 +68,7 @@ class FriendlistController extends AbstractController
     */
     public function acceptFriendship(User $newFriend)
     {
-        $user = $this->security->getUser();
+        $user = $this->getUser();
 
         // create both friendship
         $friendship1 = new Friendship();
@@ -125,7 +115,7 @@ class FriendlistController extends AbstractController
     */
     public function rejectFriendship(User $fromUser)
     {
-        $user = $this->security->getUser();
+        $user = $this->getUser();
 
         //delete request from this user
 
@@ -155,7 +145,7 @@ class FriendlistController extends AbstractController
     */
     public function banUser(User $bannedUser)
     {
-        $user = $this->security->getUser();
+        $user = $this->getUser();
 
         //BEGIN set ban
         $ban = new Ban();
@@ -208,7 +198,7 @@ class FriendlistController extends AbstractController
     */
     public function unbanUser(User $unbannedUser)
     {
-        $user = $this->security->getUser();
+        $user = $this->getUser();
 
         //BEGIN remove ban(if exists)
         $banRepository = $this->getDoctrine()->getRepository(Ban::class);
@@ -240,7 +230,7 @@ class FriendlistController extends AbstractController
      */
     public function unRequestUser(User $requestedUser)
     {
-        $user = $this->security->getUser();
+        $user = $this->getUser();
 
         //BEGIN get friendRequest
         $friendRequestRepository = $this->getDoctrine()->getRepository(FriendRequest::class);
@@ -275,7 +265,7 @@ class FriendlistController extends AbstractController
      */
     public function removeFriendship(User $removedUser)
     {
-        $user = $this->security->getUser();
+        $user = $this->getUser();
 
         //BEGIN get friendships
         $friendshipRepository= $this->getDoctrine()->getRepository(Friendship::class);
