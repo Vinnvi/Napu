@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\User\RelationsGenerator;
 
 class FriendlistController extends AbstractController
 {
@@ -43,20 +44,28 @@ class FriendlistController extends AbstractController
 
     /**
      * @Route("/friendship/{id}", name="friendship.request.add", methods="DELETE")
+     * @param RelationsGenerator $relation
      * @param User $newFriend
      * @return Symfony\Component\HttpFoundation\Response;
     */
-    public function addFriendshipRequest(User $newFriend)
+    public function addFriendshipRequest(RelationsGenerator $relation, User $newFriend)
     {
         $user = $this->getUser();
-        $friendRequest = new FriendRequest();
-        $friendRequest->setFromUser($user);
-        $friendRequest->setToUser($newFriend);
+        
+        $requestCreation = $relation->addFriendRequest($user, $newFriend);
+        
+        if($requestCreation === true)
+        {
 
-        $this->em->persist($friendRequest);
-        $this->em->flush();
+            $this->addFlash('success', 'friendship requested with success !');
 
-        $this->addFlash('success', 'friendship requested with success !');
+        } else 
+        {
+
+            $this->addFlash('error', 'error while creating request.');
+
+        }
+
 
         return $this->redirectToRoute('pub_profile', ['username' => $newFriend->getUsername()]);
     }

@@ -9,6 +9,7 @@ use App\Entity\Ban;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Service\User\RelationsGenerator;
 
 class HubController extends AbstractController
 {
@@ -19,14 +20,15 @@ class HubController extends AbstractController
     public function index(): Response
     {
         $user = $this->getUser();
-
         return $this->render('hub/main.html.twig', ['user' => $user]);
     }
 
     /**
      * @Route("/user/{username}", name="pub_profile")
+     * @param RelationGenerator $relation
+     * @param String $username
      */
-    public function publicProfile(string $username): Response
+    public function publicProfile(RelationsGenerator $relation, string $username): Response
     {
         $userRepository = $this->getDoctrine()->getRepository(User::class);
         $user = $this->getUser();
@@ -36,36 +38,17 @@ class HubController extends AbstractController
             throw $this->createNotFoundException('The user does not exist');
         }
     
-        $friendRequestRepository = $this->getDoctrine()->getRepository(FriendRequest::class);
-        $requested = $friendRequestRepository->findOneById($user->getId(),$userProfile->getId());
-
 
         $friends = false;
+        $requested = false;
 
-        if($requested !== null) {
-            $requested = true;
-        } else {
-            $requested = false;
+        $banned = $relation->hasBanned($user, $userProfile);
 
-            $friendshipRepository = $this->getDoctrine()->getRepository(Friendship::class);
-
-            #check friend or not
-            if( $friendshipRepository->findOneById($user, $userProfile) !== null )
-            {
-                $friends = true;
-            }
-        }
-
-        //BEGIN Check user banned or not
-        $banned = false;
-        $banRepository = $this->getDoctrine()->getRepository(Ban::class);
-        $ban = $banRepository->findOneById($user->getId(),$userProfile->getId());
-
-        if($ban !== null)
+        if($requested === false) 
         {
-            $banned = true;
+            $friends = $relation->areFriends($user, $userProfile);
+            $requested = $relation->hasRequested($user, $userProfile);
         }
-        //END check user banned
 
         return $this->render('pub_profile.html.twig', ['user' => $user, 'userProfile' => $userProfile, 'requested' => $requested, 'friends' => $friends, 'banned' => $banned]);
     }
