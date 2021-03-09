@@ -72,47 +72,16 @@ class FriendlistController extends AbstractController
 
     /**
      * @Route("/friendship/{id}", name="friendship.add", methods="CREATE")
+     * @param RelationsGenerator $relation
      * @param User $newFriend
      * @return Symfony\Component\HttpFoundation\Response;
     */
-    public function acceptFriendship(User $newFriend)
+    public function acceptFriendship(RelationsGenerator $relation, User $newFriend)
     {
         $user = $this->getUser();
 
-        // create both friendship
-        $friendship1 = new Friendship();
-        $friendship2 = new Friendship();
-
-        $friendship1->setUser($user);
-        $friendship1->setFriend($newFriend);
-
-        $friendship2->setUser($newFriend);
-        $friendship2->setFriend($user);
-
-        //delete friendRequest
-        // get friendRequest
-        $friendRequestRepository = $this->getDoctrine()->getRepository(FriendRequest::class);
-        $friendRequest = $friendRequestRepository->findOneById($newFriend->getId(), $user->getId());
-
-        //delete it if friendship request found
-        if($friendRequest !== null)
-        {
-            $this->em->remove($friendRequest);
-
-            //save them
-            $this->em->persist($friendship1);
-            $this->em->persist($friendship2);
-
-            $this->em->flush();
-        } else {
-            $this->addFlash('success', 'Error : friend request from this user not found');
-        }
-
-
-
-        //end save
-
-        $this->addFlash('success', 'Success! Now '.$newFriend->getUsername().' and you are friends !');
+        $relation->acceptFriendship($newFriend, $user) === true;
+    
 
         return $this->redirectToRoute('friendlist', []);
     }
@@ -218,7 +187,7 @@ class FriendlistController extends AbstractController
             $this->addFlash('success', 'friendship has been removed');
         }
 
-        return $this->redirectToRoute('pub_profile', ['username' => $requestedUser->getUsername()]);
+        return $this->redirectToRoute('pub_profile', ['username' => $removedUser->getUsername()]);
 
     }
 }

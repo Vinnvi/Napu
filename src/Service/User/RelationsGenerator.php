@@ -7,14 +7,18 @@ use App\Entity\Friendship;
 use App\Entity\FriendRequest;
 use App\Entity\Ban;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class RelationsGenerator
 {
 
     private $em;
 
-    public function __construct(EntityManagerInterface $em)
+    private $session;
+
+    public function __construct(SessionInterface $session, EntityManagerInterface $em)
     {
+        $this->session = $session;
         $this->em = $em;
     }
 
@@ -94,8 +98,11 @@ class RelationsGenerator
             return false;
         }
 
-        //TODO : check banned user
-
+        //cant request if one of them has banned the other
+        if($this->banExists($user1, $user2) === true)
+        {
+            return false;
+        }
         
         $this->createFriendRequest($user1, $user2);
 
@@ -141,6 +148,36 @@ class RelationsGenerator
     /**
      * @param User $user1
      * @param User $user2
+     * check if user1 has banned user2 AND vice versa
+     */
+    public function areBanned($user1, $user2): bool
+    {
+        if($this->hasBanned($user1, $user2) === true && $this->hasBanned($user2, $user1) === true)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param User $user1
+     * @param User $user2
+     * check if at least one of the user has banned the other
+     */
+    public function banExists($user1, $user2): bool
+    {
+        if($this->hasBanned($user1, $user2) === true || $this->hasBanned($user2, $user1) === true)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param User $user1
+     * @param User $user2
      * add a ban from user1 to user 2
      */
     public function addBan(User $user1,User $user2): bool
@@ -158,6 +195,8 @@ class RelationsGenerator
         $this->removeFriendRequest($user1, $user2);
 
         $this->createBan($user1, $user2);
+
+        $this->session->getFlashBag()->add('success', 'Success! '.$user2->getUsername().' is now banned');
 
         return true;
     }
@@ -262,6 +301,49 @@ class RelationsGenerator
 
         //remove it
         $this->em->remove($ban);
+        $this->em->flush();
+
+        return true;
+    }
+
+    /**
+     * @param User $initiator
+     * @param User $acceptor
+     * 
+     * user acceptor accepts a friendrequest from user initiator
+     */
+    public function acceptFriendship(User $initiator, User $acceptor): bool
+    {
+        //check if friendRequest really exists
+        if($this->hasRequested($initiator, $acceptor) === false)
+        {
+            return false;
+        }
+        
+        $this->createFriendship($initiator, $acceptor);
+
+        $this->removeFriendRequest($initiator, $acceptor);
+
+        return true;
+    }
+
+    /**
+     * @param User $user1
+     * @param User $user2
+     * create a friendship between two users
+     */
+    public function createFriendship(User $user1, User $user2):bool
+    {
+        $friendship1 = new Friendship();
+        $friendship1->setUser($user1);
+        $friendship1->setFriend($user2);
+
+        $friendship2 = new Friendship();
+        $friendship2->setUser($user2);
+        $friendship2->setFriend($user1);
+
+        $this->em->persist($friendship1);
+        $this->em->persist($friendship2);
         $this->em->flush();
 
         return true;
