@@ -37,7 +37,6 @@ class BetroomController extends AbstractController
     }
 
 
-
     /**
      * @Route("/betroom/create", name="create_betroom")
      */
