@@ -247,6 +247,8 @@ class RelationsGenerator
 
         $this->em->flush();
 
+        $this->session->getFlashBag()->add('success', 'Success! '.$user2->getUsername().' is not your friend anymore');
+
         return true;
     }
 
@@ -274,6 +276,8 @@ class RelationsGenerator
         //remove it
         $this->em->remove($friendRequest);
         $this->em->flush();
+
+        $this->session->getFlashBag()->add('success', 'Success! Friend request has been removed');
 
         return true;
     }
@@ -303,6 +307,8 @@ class RelationsGenerator
         $this->em->remove($ban);
         $this->em->flush();
 
+        $this->session->getFlashBag()->add('success', 'Success! '.$user2->getUsername().' is now unbanned');
+
         return true;
     }
 
@@ -323,6 +329,8 @@ class RelationsGenerator
         $this->createFriendship($initiator, $acceptor);
 
         $this->removeFriendRequest($initiator, $acceptor);
+
+        $this->session->getFlashBag()->add('success', 'Success! '.$initiator->getUsername().' is now yout friend');
 
         return true;
     }
@@ -345,6 +353,28 @@ class RelationsGenerator
         $this->em->persist($friendship1);
         $this->em->persist($friendship2);
         $this->em->flush();
+
+        return true;
+    }
+
+
+        /**
+     * @param User $initiator
+     * @param User $refuser
+     * 
+     * user refuser refuses a friendrequest from user initiator
+     */
+    public function rejectFriendship(User $initiator, User $refuser): bool
+    {
+        //check if friendRequest really exists
+        if($this->hasRequested($initiator, $refuser) === false)
+        {
+            return false;
+        }
+
+        $this->removeFriendRequest($initiator, $refuser);
+
+        $this->session->getFlashBag()->add('success', 'Success! Friend request from '.$initiator->getUsername().' has been refused');
 
         return true;
     }

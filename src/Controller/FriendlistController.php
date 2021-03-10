@@ -52,20 +52,7 @@ class FriendlistController extends AbstractController
     {
         $user = $this->getUser();
         
-        $requestCreation = $relation->addFriendRequest($user, $newFriend);
-        
-        if($requestCreation === true)
-        {
-
-            $this->addFlash('success', 'friendship requested with success !');
-
-        } else 
-        {
-
-            $this->addFlash('error', 'error while creating request.');
-
-        }
-
+        $relation->addFriendRequest($user, $newFriend);
 
         return $this->redirectToRoute('pub_profile', ['username' => $newFriend->getUsername()]);
     }
@@ -81,37 +68,21 @@ class FriendlistController extends AbstractController
         $user = $this->getUser();
 
         $relation->acceptFriendship($newFriend, $user) === true;
-    
 
         return $this->redirectToRoute('friendlist', []);
     }
 
     /**
      * @Route("/friendship/reject/{id}", name="friendship.reject", methods="CREATE")
+     * @param RelationsGenerator $relation
      * @param User $fromUser
      * @return Symfony\Component\HttpFoundation\Response;
     */
-    public function rejectFriendship(User $fromUser)
+    public function rejectFriendship(RelationsGenerator $relation, User $fromUser)
     {
         $user = $this->getUser();
 
-        //delete request from this user
-
-        // get friendRequest
-        $friendRequestRepository = $this->getDoctrine()->getRepository(FriendRequest::class);
-        $friendRequest = $friendRequestRepository->findOneById($fromUser->getId(), $user->getId());
-
-        //delete it if friendship request found
-        if($friendRequest !== null)
-        {
-            $this->em->remove($friendRequest);
-            $this->em->flush();
-            $this->addFlash('success', 'friendship request rejected with success');
-        } else {
-            $this->addFlash('error', 'friendship request not found');
-        }
-        
-        //end delete
+        $relation->rejectFriendship($fromUser, $user);
 
         return $this->redirectToRoute('friendlist', []);
     }
@@ -126,10 +97,7 @@ class FriendlistController extends AbstractController
     {
         $user = $this->getUser();
 
-        if($relation->addBan($user, $bannedUser) === true)
-        {
-            $this->addFlash('success', $bannedUser->getUsername().' is now banned');
-        }
+        $relation->addBan($user, $bannedUser);
 
         return $this->redirectToRoute('friendlist', []);
     }
@@ -145,10 +113,7 @@ class FriendlistController extends AbstractController
     {
         $user = $this->getUser();
 
-        if($relation->removeBan($user, $unbannedUser) === true )
-        {
-            $this->addFlash('success', $unbannedUser->getUsername().' is now unbanned');   
-        }
+        $relation->removeBan($user, $unbannedUser);
 
         return $this->redirectToRoute('pub_profile', ['username' => $unbannedUser->getUsername()]);
     }
@@ -163,13 +128,9 @@ class FriendlistController extends AbstractController
     {
         $user = $this->getUser();
 
-        if($relation->removeFriendRequest($user, $requestedUser) === true)
-        {
-            $this->addFlash('success', 'friendRequest has been removed');
-        }
-
+        $relation->removeFriendRequest($user, $requestedUser);
+        
         return $this->redirectToRoute('pub_profile', ['username' => $requestedUser->getUsername()]);
-
     }
 
     /**
@@ -182,12 +143,8 @@ class FriendlistController extends AbstractController
     {
         $user = $this->getUser();
 
-        if($relation->removeFriendship($user, $removedUser) === true)
-        {
-            $this->addFlash('success', 'friendship has been removed');
-        }
+        $relation->removeFriendship($user, $removedUser);
 
         return $this->redirectToRoute('pub_profile', ['username' => $removedUser->getUsername()]);
-
     }
 }
