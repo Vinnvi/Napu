@@ -39,6 +39,11 @@ class Matcha
      */
     private $betRules;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=MatchDay::class, inversedBy="matchas")
+     */
+    private $matchDay;
+
     public function __construct()
     {
         $this->betroomMatches = new ArrayCollection();
@@ -130,6 +135,18 @@ class Matcha
                 $betRule->setMatcha(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getMatchDay(): ?MatchDay
+    {
+        return $this->matchDay;
+    }
+
+    public function setMatchDay(?MatchDay $matchDay): self
+    {
+        $this->matchDay = $matchDay;
 
         return $this;
     }

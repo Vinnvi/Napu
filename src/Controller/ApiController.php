@@ -26,7 +26,27 @@ class ApiController extends AbstractController
     public function viewTest()
     {
         $user = $this->getUser();
+
+        $this->fill_teams();
         
         return $this->render('test.html.twig', ['user' => $user]);
+    }
+
+    /**
+     * fill database with teams 
+     */
+    public function fill_teams()
+    {
+        $response = $this->client->request('GET', 'https://api.football-data.org/v2/competitions/FL1/matches?matchday=11', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'X-Auth-Token' => '145e132ff7154506ac62251d4b9c16bf'
+            ],
+        ]);
+
+        dump($response->getStatusCode());
+        dump($response->toArray());
+
+        return;
     }
 }
