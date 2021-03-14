@@ -30,13 +30,24 @@ class League
     private $sport;
 
     /**
-     * @ORM\OneToMany(targetEntity=MatchDay::class, mappedBy="league")
+     * @ORM\OneToMany(targetEntity=Season::class, mappedBy="league")
      */
-    private $matchDays;
+    private $seasons;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $name;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $shortName;
 
     public function __construct()
     {
         $this->matchDays = new ArrayCollection();
+        $this->seasons = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -69,31 +80,55 @@ class League
     }
 
     /**
-     * @return Collection|MatchDay[]
+     * @return Collection|Season[]
      */
-    public function getMatchDays(): Collection
+    public function getSeasons(): Collection
     {
-        return $this->matchDays;
+        return $this->seasons;
     }
 
-    public function addMatchDay(MatchDay $matchDay): self
+    public function addSeason(Season $season): self
     {
-        if (!$this->matchDays->contains($matchDay)) {
-            $this->matchDays[] = $matchDay;
-            $matchDay->setLeague($this);
+        if (!$this->seasons->contains($season)) {
+            $this->seasons[] = $season;
+            $season->setLeague($this);
         }
 
         return $this;
     }
 
-    public function removeMatchDay(MatchDay $matchDay): self
+    public function removeSeason(Season $season): self
     {
-        if ($this->matchDays->removeElement($matchDay)) {
+        if ($this->seasons->removeElement($season)) {
             // set the owning side to null (unless already changed)
-            if ($matchDay->getLeague() === $this) {
-                $matchDay->setLeague(null);
+            if ($season->getLeague() === $this) {
+                $season->setLeague(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getShortName(): ?string
+    {
+        return $this->shortName;
+    }
+
+    public function setShortName(?string $shortName): self
+    {
+        $this->shortName = $shortName;
 
         return $this;
     }

@@ -25,15 +25,15 @@ class MatchDay
     private $number;
 
     /**
-     * @ORM\ManyToOne(targetEntity=League::class, inversedBy="matchDays")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $league;
-
-    /**
      * @ORM\OneToMany(targetEntity=Matcha::class, mappedBy="matchDay")
      */
     private $matchas;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Season::class, inversedBy="matchDays")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $season;
 
     public function __construct()
     {
@@ -53,18 +53,6 @@ class MatchDay
     public function setNumber(int $number): self
     {
         $this->number = $number;
-
-        return $this;
-    }
-
-    public function getLeague(): ?League
-    {
-        return $this->league;
-    }
-
-    public function setLeague(?League $league): self
-    {
-        $this->league = $league;
 
         return $this;
     }
@@ -95,6 +83,18 @@ class MatchDay
                 $matcha->setMatchDay(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSeason(): ?Season
+    {
+        return $this->season;
+    }
+
+    public function setSeason(?Season $season): self
+    {
+        $this->season = $season;
 
         return $this;
     }

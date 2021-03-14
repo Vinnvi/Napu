@@ -44,6 +44,16 @@ class Matcha
      */
     private $matchDay;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $status;
+
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $infos = [];
+
     public function __construct()
     {
         $this->betroomMatches = new ArrayCollection();
@@ -147,6 +157,30 @@ class Matcha
     public function setMatchDay(?MatchDay $matchDay): self
     {
         $this->matchDay = $matchDay;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getInfos(): ?array
+    {
+        return $this->infos;
+    }
+
+    public function setInfos(?array $infos): self
+    {
+        $this->infos = $infos;
 
         return $this;
     }

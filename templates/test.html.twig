@@ -1,1 +1,31 @@
 {% extends 'base.html.twig' %}
+
+{% block title %}Search{% endblock %}
+
+{% block stylesheets %}
+    {{ encore_entry_link_tags('app') }}
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="input-group">
+            <form action="#" class="form-inline  my-2 my-lg-0">
+                <input type="text" aria-label="Search" id="search-input" name="q" type="text" class="form-control" placeholder='search a user' required/>
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+
+        {% if users is not empty %}
+            <ul class="list-group">
+            {% for user in users %}
+                <li class="list-group-item"><a href="{{ path('pub_profile', {username: user.username}) }}">{{user.username}}</a></li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            Aucun utilisateur
+        {% endif %}
+    </div>
+{% endblock %}
